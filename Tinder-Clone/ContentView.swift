@@ -8,9 +8,13 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @ObservedObject var currentAppState: AppStateManager = AppStateManager()
+    
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        CoreView()
+            .environmentObject(currentAppState)
+
     }
 }
 
