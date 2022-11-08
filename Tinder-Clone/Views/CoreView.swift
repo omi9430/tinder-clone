@@ -26,7 +26,7 @@ struct CoreView: View {
             let view = Text("Star")
             return AnyView(view)
         case .message:
-            let view = Text("Message")
+            let view = ChatView(person: Person.examplePerson)
             return AnyView(view)
         case .profile:
             let view = ProfileView()

@@ -20,6 +20,7 @@ class ChatManager: ObservableObject {
     init(person: Person){
         self.person = person
         loadMessages()
+        setUpKeyboardPublisher()
     }
     
     private let keyBoardWillShow = NotificationCenter.default

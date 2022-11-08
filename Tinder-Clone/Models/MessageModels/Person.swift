@@ -10,7 +10,7 @@ import Foundation
 /**
  A person is someone except for the current user people you're messaging with or people you're matching with
  */
-struct Person{
+struct Person: Hashable{
     var name: String
     var imageURLs: [URL]
 }

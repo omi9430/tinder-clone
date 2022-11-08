@@ -11,6 +11,8 @@ struct ChatView: View {
     
     @ObservedObject var chatManager: ChatManager
     @State private var messageTyping: String = ""
+    @State private var proxyScroller: ScrollViewProxy? = nil
+    
     private var person: Person
     
     init(person: Person){
@@ -31,19 +33,26 @@ struct ChatView: View {
             
             VStack{
                 Spacer().frame(height: 80)
-                ScrollView{
+                
+                ScrollView(.vertical, showsIndicators: false, content: {
                     
-                    LazyVStack{
-                        /// Get all the messages from chat manager with the index of array so you can adjust the position of Textfield according to last message
-                        ForEach(chatManager.messages.indices, id: \.self) { index in
-                            
-                            let msg = chatManager.messages[index]
-                            
-                            ChatMessageView(message: msg)
-                            
+                    ScrollViewReader { proxy in
+                        LazyVStack{
+                            /// Get all the messages from chat manager with the index of array so you can adjust the position of Textfield according to last message
+                            ForEach(chatManager.messages.indices, id: \.self) { index in
+                                
+                                let msg = chatManager.messages[index]
+                                
+                                ChatMessageView(message: msg)
+                                    .id(index)
+                            }
+                        }//LazyVStack
+                        .onAppear {
+                            proxyScroller = proxy
                         }
-                    }//LazyVStack
-                }//ScrollView
+
+                    }//ScrollViewReader
+                })//ScrollView
                 
                 ZStack(alignment: .trailing){
                     HStack{
@@ -60,6 +69,7 @@ struct ChatView: View {
                             ///Because the message is sent from us so we do not add the person
                             chatManager.sendMessage(message: Message(content: messageTyping))
                             messageTyping = ""
+                            scrollToBottom()
                            
                         } label: {
                             Text("Send")
@@ -87,11 +97,22 @@ struct ChatView: View {
                
 
             }//VStack
-            
-            
-            
+   
         }//ZStack
+        .navigationTitle("")
+        .navigationBarHidden(true)
+        .onChange(of: chatManager.isKeyboardShowing, perform: {value in
+            if value {
+                scrollToBottom()
+            }
+        })
         
+    }//body
+    
+    //MARK: function to Scroll chat messages
+    func scrollToBottom(){
+        let count = chatManager.messages.count - 1
+        proxyScroller?.scrollTo(count, anchor: .bottom)
     }
     
   
