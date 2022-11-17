@@ -14,4 +14,14 @@ import Foundation
 class AppStateManager: ObservableObject {
     
     @Published var currentState : TabBarButtonType = .fire
+    @Published var personProfile: Person? = nil
+    @Published var showSubPopUp: Bool = false
+    
+    public func showPersonProfile(_ person: Person){
+        self.personProfile = person
+    }
+    
+    public func showSubscriptionPopUp(){
+        self.showSubPopUp = true
+    }
 }

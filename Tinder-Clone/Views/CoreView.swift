@@ -14,6 +14,7 @@ struct CoreView: View {
      */
         
     @EnvironmentObject var appState: AppStateManager
+    @EnvironmentObject var userMng: UserManager
     
     func currentView() -> some View {
         /// This function displays the selected View
@@ -23,10 +24,10 @@ struct CoreView: View {
             let view = Text("Fire")
             return AnyView(view)
         case .star:
-            let view = Text("Star")
+            let view = MatchesandPicksView()
             return AnyView(view)
         case .message:
-            let view = ChatView(person: Person.examplePerson)
+            let view = MessageList()
             return AnyView(view)
         case .profile:
             let view = ProfileView()
@@ -35,51 +36,54 @@ struct CoreView: View {
     }
     
     var body: some View {
-        ZStack{
-            
-            Color(.systemGray6)
-                .opacity(0.35)
-                .edgesIgnoringSafeArea(.vertical)
-          
-           
-            VStack{
-                /**
-                 - Create buttons for the tab bar in the HStack
-                 - Space them up equally
-                 */
+        NavigationView {
+            ZStack{
                 
-                /// This Group hold all the buttons
-                Group{
-                 //   Spacer().frame(height: 0)
-                    HStack{
+                Color(.systemGray6)
+                    .opacity(0.35)
+                    .edgesIgnoringSafeArea(.vertical)
+              
+               
+                VStack{
+                    /**
+                     - Create buttons for the tab bar in the HStack
+                     - Space them up equally
+                     */
+                    /// This Group hold all the buttons
+                    Group{
+                     //   Spacer().frame(height: 0)
+                        HStack{
+                            Spacer()
+                            //Flame
+                            TabBarButtonsView( type: .fire)
+                            Spacer()
+                            // Star Btn
+                            TabBarButtonsView(type: .star)
+                            Spacer()
+                            // message Btn
+                            TabBarButtonsView( type: .message)
+                            Spacer()
+                            // Profile
+                            TabBarButtonsView(type: .profile)
+                                            
                         Spacer()
-                        //Flame
-                        TabBarButtonsView( type: .fire)
-                        Spacer()
-                        // Star Btn
-                        TabBarButtonsView(type: .star)
-                        Spacer()
-                        // message Btn
-                        TabBarButtonsView( type: .message)
-                        Spacer()
-                        // Profile
-                        TabBarButtonsView(type: .profile)
-                                        
+                        }//HStack
+                        .frame(height: 100)
+                    }
+                    
+                 
+                    
+                        //Add the current view on screen
+                    currentView()
+                    
                     Spacer()
-                    }//HStack
-                    .frame(height: 100)
-                }
+                    
+                }//VStack
                 
-             
-                
-                    //Add the current view on screen
-                currentView()
-                
-                Spacer()
-                
-            }//VStack
-            
+            }//Zstack
+            .modifier(HideNavigationBar())
         }
+        
         
             
     }
@@ -90,5 +94,6 @@ struct CoreView_Previews: PreviewProvider {
         CoreView()
             .previewDevice("iPhone 12 Pro")
             .environmentObject(AppStateManager())
+            .environmentObject(UserManager())
     }
 }

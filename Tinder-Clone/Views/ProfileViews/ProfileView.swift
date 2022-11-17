@@ -9,9 +9,15 @@ import SwiftUI
 
 struct ProfileView: View {
     
+    @EnvironmentObject var userMng: UserManager
+    @EnvironmentObject var appStateMng: AppStateManager
+    
     /// Observing profileViewModel to update the data
-
     @ObservedObject var profileVM = ProfileViewModel()
+    
+    private var user: UserModel {
+        return userMng.currentUser
+    }
     
     var body: some View {
         
@@ -21,8 +27,8 @@ struct ProfileView: View {
             ZStack(alignment:.topTrailing) {
                 
                 //Profile Image
-                RoundedImage(url: URL(string: "https://picsum.photos/400"))
-                   // .frame(height: 200)
+                RoundedImage(url: user.imageUrls.first)
+                    .frame(height: 200)
                 
                 
                 //Profile Image edit Button
@@ -47,13 +53,13 @@ struct ProfileView: View {
             Group{
                 Spacer().frame(height: 18) // Spacer to give space between Zstack and text
                 
-                Text("Umair Khan")
+                Text("\(user.name), \(user.age)" )
                     .font(.system(size: 26, weight: .medium))
                     .foregroundColor(Color.blue)
                 
                 Spacer().frame(height: 8)// Spacer to give space between name text and profession text
                     
-                Text("Software Engineer")
+                Text(user.jobTitle)
                     
                 
                 Spacer().frame(height: 22)
@@ -79,73 +85,74 @@ struct ProfileView: View {
          
             
             /// Create Pink HStack
-            HStack{
-                Text("Photo Tip: Make waves with a beach photo and get more likes")
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(3)
-                    .foregroundColor(.white)
-                    .font(.system(size: 14))
-                Button {
+            if !user.profileTip.isEmpty{ ///Show the tip only if it is not empty
+                HStack{
+                    Text(user.profileTip)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(3)
+                        .foregroundColor(.white)
+                        .font(.system(size: 14))
+                    Button {
 
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.system(size: 12,weight: .heavy))
-                        .foregroundColor(.pink)
-                        .padding(6)
-
-                }
-                .background(.white)
-                .clipShape(Circle())
-
-            }
-            .padding()
-            .background(.pink)
-            .cornerRadius(10)
-            .padding(.horizontal,8)
-            
-            Spacer()
-            ///This is the group for Pormotion SubViews
-            Group{
-                
-                ZStack{
-                    VStack{
-                        TabView{
-                            ForEach(profileVM.promoArray) { item in
-                                ProfilePromotionView(titlePromo: item.title, subTitlePromo: item.subTitle) {
-                                    print("Hello world")
-                                }
-                            }
-                            
-                        }.tabViewStyle(.page)
-                        
-                        Button {
-                            //TODO: Write button action
-                        } label: {
-                                Text("Subscribe Now")
-                                .foregroundColor(.pink)
-                                .font(.system(size: 20, weight: .medium))
-                                .frame(width: 250, height: 70)
-                                
-                                
-                        }
-                        .background(.white)
-                        .cornerRadius(50)
-                        .shadow(radius: 50,y: 15)
-                        .padding(.bottom,10)
-                        
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.system(size: 12,weight: .heavy))
+                            .foregroundColor(.pink)
+                            .padding(6)
 
                     }
+                    .background(.white)
+                    .clipShape(Circle())
+
                 }
-                .background(Color.gray.opacity(0.15))
-                
+                .padding()
+                .background(.pink)
+                .cornerRadius(10)
+            .padding(.horizontal,8)
             }
-          
-         
             
-           //Spacer()
+            Spacer()
             
-       
-        
+            
+            ///This is the group for Pormotion SubViews
+            if !user.isGoldSubsccriber {
+                Group{
+                    
+                    ZStack{
+                        VStack{
+                            TabView{
+                                ForEach(profileVM.promoArray) { item in
+                                    ProfilePromotionView(titlePromo: item.title, subTitlePromo: item.subTitle) {
+                                        print("Hello world")
+                                    }
+                                }
+                                
+                            }.tabViewStyle(.page)
+                            
+                            Button {
+                                appStateMng.showSubscriptionPopUp()
+                            } label: {
+                                    Text("Subscribe Now")
+                                    .foregroundColor(.pink)
+                                    .font(.system(size: 20, weight: .medium))
+                                    .frame(width: 250, height: 70)
+                                    
+                                    
+                            }
+                            .background(.white)
+                            .cornerRadius(50)
+                            .shadow(radius: 50,y: 15)
+                            .padding(.bottom,10)
+                            
+
+                        }
+                    }
+                    .background(Color.gray.opacity(0.15))
+                    
+                }
+            }
+            
+           Spacer()
         }//VStack
         .background(.white)
         
@@ -157,6 +164,7 @@ struct ProfileView: View {
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         ProfileView()
-            
+            .environmentObject(UserManager())
+            .environmentObject(AppStateManager())
     }
 }

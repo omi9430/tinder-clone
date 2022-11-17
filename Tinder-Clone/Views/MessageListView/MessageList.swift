@@ -59,13 +59,53 @@ struct MessageList: View {
                     .animation(.easeIn(duration: 0.25))
                 }//if condition
             }//Hstack
+           
+            Spacer().frame(height: 15)
+            // Add the Message RowView
+            // If search text is empty then show all the rows else show the filtered one
+            ZStack {
+                VStack {
+                    ForEach(messagesListVM.messagesPreview.filter({searchText.isEmpty ? true:checkFilter($0)}), id: \.self){ preview in
+                        NavigationLink(destination: ChatView(person: preview.person)) {
+                            MessageRowView(messagePreview: preview)
+                            
+                        }
+                        .animation(.easeIn(duration: 0.25))
+                        .transition(.slide)
+                        
+                    }
+                }//VStack for Message Previews
+                
+                
+                
+            }.overlay {
+                // add an overlay when user start to search
+                if isEditing && searchText.isEmpty{
+                    Color.white.opacity(0.5)
+                }
+                
+            } //ZStack
+            
+            
             Spacer()
+
         }//VStack
+        .modifier(HideNavigationBar())
+        
     }
+    
+    
+    func checkFilter(_ preview: MessagePreviewModel) -> Bool{
+        preview.filterView(searchText, preview)
+    }
+        
 }
 
 struct MessageList_Previews: PreviewProvider {
     static var previews: some View {
-        MessageList()
+        
+        NavigationView {
+            MessageList()
+        }
     }
 }

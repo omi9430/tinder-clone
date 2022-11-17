@@ -99,14 +99,14 @@ struct ChatView: View {
             }//VStack
    
         }//ZStack
-        .navigationTitle("")
-        .navigationBarHidden(true)
+        .modifier(HideNavigationBar())
         .onChange(of: chatManager.isKeyboardShowing, perform: {value in
             if value {
                 scrollToBottom()
             }
         })
         
+      
     }//body
     
     //MARK: function to Scroll chat messages

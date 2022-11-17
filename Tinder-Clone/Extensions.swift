@@ -31,3 +31,13 @@ extension Color {
     static let titleText = Color.blue
     static let primaryText = Color.gray.opacity(0.9)
 }
+
+//MARK: Hide Navigation bar modifire
+
+struct HideNavigationBar: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .navigationTitle("")
+            .navigationBarHidden(true)
+    }
+}

@@ -9,7 +9,7 @@ import Foundation
 
 class MessagesListVm: ObservableObject {
     
-    @Published var messages: [MessagePreview] = []
+    @Published var messagesPreview: [MessagePreviewModel] = []
     
     init() {
         loadMessage()
@@ -17,7 +17,9 @@ class MessagesListVm: ObservableObject {
     
     func loadMessage(){
         /// This will load messages list from the server
-        self.messages =  [MessagePreview.exampleMessagePreview]
+        self.messagesPreview =  [MessagePreviewModel.exampleMessagePreview, MessagePreviewModel.exampleMessagePreview2]
     }
+    
+    
     
 }
